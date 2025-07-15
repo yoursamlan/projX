@@ -251,12 +251,16 @@
       border-radius: 0.5em;
       color: var(--font);
     }
+
+    .examName{
+      font-weight: 300;
+    }
   </style>
 </head>
 
 <body>
   <header>
-    QnO | Smartbook
+    <div>QnO <span class="examName">SmartBook</span></div>
     <div class="header-icons">
       <a href="./QVu/index.html" title="QVu">
         <ion-icon name="book-outline"></ion-icon>
@@ -675,11 +679,11 @@
       const yellowPercent = totalSets ? Math.round((startedSets / totalSets) * 100) : 0;
       const grayPercent = 100 - greenPercent - yellowPercent;
 
-      console.log("📊 Final Calculation:");
-      console.log(`   ✅ Completed Sets: ${completedSets}`);
-      console.log(`   🟡 Started Sets:   ${startedSets}`);
-      console.log(`   ⚪ Untouched Sets: ${totalSets - completedSets - startedSets}`);
-      console.log(`   % Green: ${greenPercent} | % Yellow: ${yellowPercent} | % Gray: ${grayPercent}`);
+      console.log("Final Calculation:");
+      console.log(`Completed Sets: ${completedSets}`);
+      console.log(`Started Sets:   ${startedSets}`);
+      console.log(`Untouched Sets: ${totalSets - completedSets - startedSets}`);
+      console.log(`% Green: ${greenPercent} | % Yellow: ${yellowPercent} | % Gray: ${grayPercent}`);
 
       const progressBar = document.getElementById("globalProgressBar");
       progressBar.innerHTML = `
