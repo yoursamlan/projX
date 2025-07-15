@@ -1,1 +1,694 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>QnO | Smartbook</title><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet"><script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script><script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script><style>:root{--bg:#fff;--bg0:#fefefe;--border:#bbb;--font:#343a40;--opCol:#f0f8ff;--red0:#a42834;--redG:#ff7e89;--redBG:#ff9f9f;--yellowBG:#fffbaa;--green0:#23903c;--greenG:#76d04d;--greenBG:#bdff9f;--accCol2:#0263ca;--nbCol:#007bff}*{font-family:Montserrat,sans-serif;box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--font);padding:1rem}header{display:flex;justify-content:space-between;align-items:center;font-size:1.5rem;font-weight:600;margin-bottom:.5rem;color:var(--nbCol)}.header-icons a{font-size:1.25rem;color:var(--font);margin-left:1rem;text-decoration:none}.progress-global{height:8px;background:var(--border);border-radius:4px;overflow:hidden;margin-bottom:1rem}.progress-global-bar{display:flex;height:100%;width:100%}.progress-global-bar>div{height:100%}.search{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:0}.search input{flex:1;padding:.5em;border:none;font-size:1em;color:var(--font);background:var(--bg0)}.search button{background:0 0;border:none;padding:.25em .25em 0 0;font-size:1.5em;cursor:pointer;color:var(--font)}.section-title{font-size:1.2em;font-weight:600;margin:.5em 0;color:var(--nbCol)}.recent-boxes{display:flex;gap:1em;flex-wrap:nowrap;overflow-x:auto;padding-bottom:1em}.recent-card{flex:0 0 auto;border:1px solid var(--font);padding:1em;border-radius:16px;width:230px;cursor:pointer;background:var(--bg0);box-shadow:0 2px 6px rgba(0,0,0,.1)}.recent-card h3{margin:0 0 0.5em 0;font-size:1.05em;color:var(--font)}.recent-card .meta{display:flex;justify-content:space-between;margin-top:.25em}.recent-card .badge{background:var(--nbCol);color:#fff;padding:.2em .6em;border-radius:8px;font-size:.75em}.recent-card .count{background:#a42834;color:#fff;padding:.2em .6em;border-radius:8px;font-size:.75em}.progress{background:var(--border);height:6px;margin-top:.75em;border-radius:4px;overflow:hidden}.progress-bar{height:100%;background:var(--green0)}select{width:100%;padding:.5em;margin:.25em 0;font-size:1em;border:1px solid var(--border);border-radius:6px;background-color:var(--bg0);color:var(--font)}#topicsList{max-height:40vh;overflow-y:auto;padding-bottom:20vh}.topic-card{border:1px solid var(--border);border-radius:10px;padding:.5em;margin:.25em;cursor:pointer;background:var(--bg0);color:var(--font)}.topic-card h4{margin:0}.topic-card .badge{background:#a42834;color:#fff;padding:.25em .5em;font-size:.75em;border-radius:8px}footer{position:absolute;bottom:0;left:0;background-color:var(--bg);padding:.25em;text-align:center;width:100%}.footerdiv{text-align:center;color:var(--font);width:100%}.auth{text-decoration:none;color:var(--accCol2)}.oldindex{text-decoration:none;background-color:var(--border);padding:.25em .5em;margin-left:.25em;border-radius:.5em;color:#fff}</style></head><body><header>QnO | Smartbook<div class="header-icons"><a href="./QVu/index.html" title="QVu"><ion-icon name="book-outline"></ion-icon></a><a onclick="cdm()" title="Toggle Mode"><ion-icon id="dmb1" name="moon-outline"></ion-icon></a></div></header><div class="progress-global"><div class="progress-global-bar" id="globalProgressBar"></div></div><div class="search"><input type="text" id="searchInput" placeholder="Search topics or subjects..."><button><ion-icon name="search-outline"></ion-icon></button></div><div class="section-title" id="searchResultsTitle" style="display:none">Search Results</div><div id="searchResults"></div><div class="section-title">Recent</div><div class="recent-boxes" id="recentTopics"></div><div class="section-title">All Questions</div><select id="subjectSelect"><option value="">Select Subject</option></select><select id="chapterSelect"><option value="">Select Chapter</option></select><div id="topicsList"></div><footer><div class="footerdiv">&copy;<a class="auth" href="https://github.com/yoursamlan" target="_blank">Amlan Saha Kundu</a>, 2025<!--a class="oldindex" href="./index0.html">Old Index</a--></div></footer><script>let topicData={},recent=JSON.parse(localStorage.getItem("recentTopics")||"[]");const subjectSelect=document.getElementById("subjectSelect"),chapterSelect=document.getElementById("chapterSelect"),topicsList=document.getElementById("topicsList"),searchInput=document.getElementById("searchInput");function loadSubjects(){subjectSelect.innerHTML='<option value="">Select Subject</option>',Object.entries(topicData).forEach((([e,t])=>{const n=Object.values(t).flatMap((e=>Object.values(e))).reduce(((e,t)=>e+t),0),o=document.createElement("option");o.value=e,o.textContent=`${e} (${n})`,subjectSelect.appendChild(o)}))}function updateRecent(){const e=document.getElementById("recentTopics");e.innerHTML="",[...recent].slice(0,10).forEach((t=>{const n=new URL(t.href,location.href).searchParams.get("sb"),o=JSON.parse(localStorage.getItem(n)||"[]"),r=o.filter((e=>9===e)).length,c=topicData?.[n.split("/")[0]]?.[n.split("/")[1]]?.[n.split("/")[2]]||o.length||1,s=Math.floor(r/c*100),l=n.split("/")[0],a=document.createElement("div");a.className="recent-card",a.innerHTML=`\n      <h3>${t.text}</h3>\n      <div class="meta">\n        <span class="badge">${l}</span>\n        <span class="count">${c}</span>\n      </div>\n      <div class='progress'><div class='progress-bar' style='width:${s}%'></div></div>\n    `,a.onclick=()=>window.open(t.href,"_blank"),e.appendChild(a)}))}function updateGlobalProgress(){let e=0,t=0;Object.entries(topicData).forEach((([n,o])=>{Object.entries(o).forEach((([o,r])=>{Object.entries(r).forEach((([r,c])=>{const s=`${n}/${o}/${r}`,l=JSON.parse(localStorage.getItem(s)||"[]");e+=l.filter((e=>9===e)).length,t+=c}))}))}));const n=t?Math.round(e/t*100):0;document.getElementById("globalProgressBar").style.width=n+"%"}function cdm(){const e=document.getElementById("dmb1");let t=localStorage.getItem("qno-darkflag")||"1";t="1"===t?"0":"1",localStorage.setItem("qno-darkflag",t),e.name="0"===t?"sunny-outline":"moon-outline","function"==typeof dark&&dark()}function dark(){if(x=localStorage.getItem("qno-darkflag"),null==x)localStorage.setItem("qno-darkflag",1),console.log("INIT Dark Mode",x),dark();else{var e=document.querySelector(":root");if(1==x){e.style.setProperty("--darkflag","0"),e.style.setProperty("--bg","#fff"),e.style.setProperty("--bg0","#fefefe"),e.style.setProperty("--border","#bbb"),e.style.setProperty("--font","#343a40"),e.style.setProperty("--opCol","#f0f8ff"),e.style.setProperty("--red0","#a42834"),e.style.setProperty("--redG","#ff7e89"),e.style.setProperty("--green0","#23903c"),e.style.setProperty("--greenG","#76d04d"),e.style.setProperty("--greenBG","#bdff9f"),e.style.setProperty("--yellowBG","#fff300"),e.style.setProperty("--redBG","#ff9f9f"),e.style.setProperty("--accCol2","#0263ca"),e.style.setProperty("--nbCol","#007bff");try{document.getElementById("dmb1").innerHTML="Lights Off"}catch(e){console.log("dmb1 in not found")}}else if(0==x){e.style.setProperty("--darkflag","1"),e.style.setProperty("--bg","#000"),e.style.setProperty("--bg0","#111"),e.style.setProperty("--font","#d3d3d3"),e.style.setProperty("--border","#343a40"),e.style.setProperty("--opCol","#222"),e.style.setProperty("--red0","#ffbac0"),e.style.setProperty("--redG","#fe2436"),e.style.setProperty("--green0","#96ff9d"),e.style.setProperty("--greenG","#76d04d"),e.style.setProperty("--greenBG","#226d00"),e.style.setProperty("--yellowBG","#b2b20c"),e.style.setProperty("--redBG","#6d2222"),e.style.setProperty("--accCol2","#84c5fe"),e.style.setProperty("--nbCol","#0263ca");try{document.getElementById("dmb1").innerHTML="Lights On"}catch(e){console.log("dmb1 in not found")}}}}function cdm(){x=localStorage.getItem("qno-darkflag"),null==x?(localStorage.setItem("qno-darkflag",1),console.log("INIT Dark Mode",x),dark()):1==x?(localStorage.setItem("qno-darkflag",0),document.getElementById("dmb1").innerHTML="Lights Off",dark()):0==x&&(localStorage.setItem("qno-darkflag",1),document.getElementById("dmb1").innerHTML="Lights On",dark())}function updateGlobalProgress(){let e=0,t=0,n=0;Object.entries(topicData).forEach((([o,r])=>{Object.entries(r).forEach((([r,c])=>{Object.entries(c).forEach((([c,s])=>{e++;const l=`${o}/${r}/${c}`,a=JSON.parse(localStorage.getItem(l)||"[]"),i=a.filter((e=>9===e)).length;0!==a.length&&(i===s&&s>0?t++:n++)}))}))}));const o=e?Math.round(t/e*100):0,r=e?Math.round(n/e*100):0,c=100-o-r;console.log("📊 Final Calculation:"),console.log(`   ✅ Completed Sets: ${t}`),console.log(`   🟡 Started Sets:   ${n}`),console.log("   ⚪ Untouched Sets: "+(e-t-n)),console.log(`   % Green: ${o} | % Yellow: ${r} | % Gray: ${c}`);document.getElementById("globalProgressBar").innerHTML=`\n    <div style="width: ${o}%; background: var(--green0); height: 100%;"></div>\n    <div style="width: ${r}%; background: var(--accCol2); height: 100%;"></div>\n    <div style="width: ${c}%; background: var(--border); height: 100%;"></div>\n  `}fetch("topicIndex.json").then((e=>e.json())).then((e=>{topicData=e[Object.keys(e)[0]],loadSubjects(),updateRecent(),updateGlobalProgress()})),subjectSelect.addEventListener("change",(()=>{chapterSelect.innerHTML='<option value="">Select Chapter</option>',topicsList.innerHTML="";const e=subjectSelect.value;e&&Object.entries(topicData[e]).forEach((([e,t])=>{const n=Object.values(t).reduce(((e,t)=>e+t),0),o=document.createElement("option");o.value=e,o.textContent=`${e} (${n})`,chapterSelect.appendChild(o)}))})),chapterSelect.addEventListener("change",(()=>{topicsList.innerHTML="";const e=subjectSelect.value,t=chapterSelect.value,n=topicData[e][t];Object.entries(n).forEach((([n,o])=>{const r=`${e}/${t}/${n}`,c=JSON.parse(localStorage.getItem(r)||"[]").filter((e=>9===e)).length,s=Math.floor(c/o*100),l=document.createElement("div");l.className="topic-card",l.innerHTML=`<h4>${n} <span class='badge'>${o}</span></h4><div class='progress'><div class='progress-bar' style='width:${s}%'></div></div>`,l.onclick=()=>{const t=`SmartBook/index.html?sb=${r}`,o=recent.findIndex((e=>e.href===t));if(-1!==o){const[e]=recent.splice(o,1);recent.unshift(e)}else recent.unshift({href:t,text:n,subject:e}),recent.length>10&&recent.pop();recent.length>10&&recent.pop(),localStorage.setItem("recentTopics",JSON.stringify(recent)),updateRecent(),updateGlobalProgress(),window.open(t,"_blank")},topicsList.appendChild(l)}))})),document.addEventListener("DOMContentLoaded",(()=>{const e=localStorage.getItem("qno-darkflag");document.getElementById("dmb1").name="0"===e?"sunny-outline":"moon-outline"})),searchInput.addEventListener("input",(()=>{const e=searchInput.value.toLowerCase().trim(),t=document.getElementById("searchResults"),n=document.getElementById("searchResultsTitle");if(t.innerHTML="",n.style.display="none",!e)return subjectSelect.selectedIndex=0,chapterSelect.innerHTML='<option value="">Select Chapter</option>',void(topicsList.innerHTML="");const o=[];for(const[t,n]of Object.entries(topicData))for(const[r,c]of Object.entries(n))for(const[n,s]of Object.entries(c))n.toLowerCase().includes(e)&&o.push({subject:t,chapter:r,topic:n,count:s});if(0===o.length)return void(t.innerHTML="<p>No matching topic found.</p>");const r=o[0];subjectSelect.value=r.subject,chapterSelect.innerHTML='<option value="">Select Chapter</option>',Object.entries(topicData[r.subject]).forEach((([e,t])=>{const n=Object.values(t).reduce(((e,t)=>e+t),0),o=document.createElement("option");o.value=e,o.textContent=`${e} (${n})`,chapterSelect.appendChild(o)})),chapterSelect.value=r.chapter,topicsList.innerHTML="",Object.entries(topicData[r.subject][r.chapter]).forEach((([e,t])=>{const n=`${r.subject}/${r.chapter}/${e}`,o=JSON.parse(localStorage.getItem(n)||"[]").filter((e=>9===e)).length,c=Math.floor(o/t*100),s=document.createElement("div");s.className="topic-card",s.innerHTML=`<h4>${e} <span class='badge'>${t}</span></h4><div class='progress'><div class='progress-bar' style='width:${c}%'></div></div>`,s.onclick=()=>{const t=`SmartBook/index.html?sb=${n}`,o=recent.findIndex((e=>e.href===t));if(-1!==o){const[e]=recent.splice(o,1);recent.unshift(e)}else recent.unshift({href:t,text:e,subject:r.subject}),recent.length>10&&recent.pop();localStorage.setItem("recentTopics",JSON.stringify(recent)),updateRecent(),updateGlobalProgress(),window.open(t,"_blank")},topicsList.appendChild(s)})),n.style.display="block",t.innerHTML="",o.forEach((({subject:e,chapter:n,topic:o,count:r})=>{const c=`${e}/${n}/${o}`,s=JSON.parse(localStorage.getItem(c)||"[]").filter((e=>9===e)).length,l=Math.floor(s/r*100),a=document.createElement("div");a.className="topic-card",a.innerHTML=`<h4>${o} <span class='badge'>${r}</span> <small>(${e} / ${n})</small></h4>\n      <div class='progress'><div class='progress-bar' style='width:${l}%'></div></div>`,a.onclick=()=>{const t=`SmartBook/index.html?sb=${c}`,n=recent.findIndex((e=>e.href===t));if(-1!==n){const[e]=recent.splice(n,1);recent.unshift(e)}else recent.unshift({href:t,text:o,subject:e}),recent.length>10&&recent.pop();localStorage.setItem("recentTopics",JSON.stringify(recent)),updateRecent(),updateGlobalProgress(),window.open(t,"_blank")},t.appendChild(a)}))})),dark();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>QnO | Smartbook v4.1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="assets/img/logo.png" type="image/png">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <style>
+    :root {
+      --bg: #fff;
+      --bg0: #fefefe;
+      --border: #ccc;
+      --font: #343a40;
+      --opCol: #f0f8ff;
+
+      --red0: #a42834;
+      --redG: #ff7e89;
+      --redBG: #ff9f9f;
+
+      --yellowBG: #ffdc17;
+
+      --green0: #23903c;
+      --greenG: #76d04d;
+      --greenBG: #bdff9f;
+
+      --accCol2: #0263ca;
+      --nbCol: #007bff;
+    }
+
+    * {
+      font-family: 'Montserrat', sans-serif;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--font);
+      padding: 1rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--nbCol);
+    }
+
+    .header-icons a {
+      font-size: 1.25rem;
+      color: var(--font);
+      margin-left: 1rem;
+      text-decoration: none;
+    }
+
+    .progress-global {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .progress-global-bar {
+      display: flex;
+      /* enable flex layout */
+      height: 100%;
+      width: 100%;
+    }
+
+    .progress-global-bar>div {
+      height: 100%;
+    }
+
+
+
+    .search {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 0rem;
+    }
+
+    .search input {
+      flex: 1;
+      padding: 0.5em;
+      border: none;
+      font-size: 1em;
+      color: var(--font);
+      background: var(--bg0);
+    }
+
+    .search button {
+      background: none;
+      border: none;
+      padding: 0.25em 0.25em 0 0;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: var(--font);
+    }
+
+    .section-title {
+      font-size: 1.2em;
+      font-weight: 600;
+      margin: 0.5em 0;
+      color: var(--nbCol);
+    }
+
+    .recent-boxes {
+      display: flex;
+      gap: 1em;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      padding-bottom: 1em;
+    }
+
+    .recent-card {
+      flex: 0 0 auto;
+      border: 1px solid var(--font);
+      padding: 0.5em;
+      border-radius: 0.75em;
+      width: 230px;
+      cursor: pointer;
+      background: var(--bg0);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      min-height: 130px;
+      /* Add a minimum height */
+    }
+
+    .recent-card h3 {
+      margin: 0;
+      font-size: 1em;
+      color: var(--font);
+      flex-grow: 1;
+      /* Allow title to take available space */
+    }
+
+    .recent-card .meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: auto;
+      /* Push to bottom */
+    }
+
+    .recent-card .badge {
+      background: var(--nbCol);
+      color: #fff;
+      padding: 0.2em 0.6em;
+      border-radius: 8px;
+      font-size: 0.75em;
+    }
+
+    .recent-card .count {
+      background: #a42834;
+      color: #fff;
+      padding: 0.2em 0.6em;
+      border-radius: 8px;
+      font-size: 0.75em;
+    }
+
+    .progress {
+      background: var(--border);
+      height: 6px;
+      margin-top: 0.75em;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--green0);
+    }
+
+    select {
+      width: 100%;
+      padding: 0.5em;
+      margin: 0.25em 0;
+      font-size: 1em;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background-color: var(--bg0);
+      color: var(--font);
+    }
+
+    #topicsList {
+      max-height: 40vh;
+      overflow-y: auto;
+      padding-bottom: 20vh;
+    }
+
+    .topic-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.5em;
+      margin: 0.25em;
+      cursor: pointer;
+      background: var(--bg0);
+      color: var(--font);
+    }
+
+    .topic-card h4 {
+      margin: 0;
+    }
+
+    .topic-card .badge {
+      background: #a42834;
+      color: white;
+      padding: 0.25em 0.5em;
+      font-size: 0.75em;
+      border-radius: 8px;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 5px;
+      left: 0;
+      background-color: var(--bg);
+      padding: 0.25em;
+      text-align: center;
+      width: 100%;
+      z-index: 1000;
+    }
+
+    .footerdiv {
+      text-align: center;
+      color: var(--font);
+      width: 100%;
+    }
+
+    .auth {
+      text-decoration: none;
+      color: var(--accCol2);
+    }
+
+    .oldindex {
+      text-decoration: none;
+      background-color: var(--border);
+      padding: 2px 8px;
+      margin-left: 0.25em;
+      border-radius: 0.5em;
+      color: var(--font);
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    QnO | Smartbook
+    <div class="header-icons">
+      <a href="./QVu/index.html" title="QVu">
+        <ion-icon name="book-outline"></ion-icon>
+      </a>
+      <a onclick="cdm()" title="Toggle Mode">
+        <ion-icon id="dmb1" name="moon-outline"></ion-icon>
+      </a>
+    </div>
+  </header>
+
+  <div class="progress-global">
+    <div class="progress-global-bar" id="globalProgressBar"></div>
+  </div>
+
+  <div class="search">
+    <input type="text" id="searchInput" placeholder="Search topics or subjects..." />
+    <button>
+      <ion-icon name="search-outline"></ion-icon>
+    </button>
+  </div>
+  <div class="section-title" id="searchResultsTitle" style="display:none;">Search Results</div>
+  <div id="searchResults"></div>
+
+
+  <div class="section-title">Recent</div>
+  <div class="recent-boxes" id="recentTopics"></div>
+
+  <div class="section-title">All Questions</div>
+  <select id="subjectSelect">
+    <option value="">Select Subject</option>
+  </select>
+  <select id="chapterSelect">
+    <option value="">Select Chapter</option>
+  </select>
+  <div id="topicsList"></div>
+  <footer>
+    <div class="footerdiv">
+      &copy; <a class="auth" href="https://github.com/yoursamlan" target="_blank">Amlan Saha Kundu</a>, 2025 <a
+        class="oldindex" href="./index0.html">Old Index</a>
+    </div>
+
+  </footer>
+  <script>
+    let topicData = {};
+    let recent = JSON.parse(localStorage.getItem("recentTopics") || "[]");
+
+    const subjectSelect = document.getElementById('subjectSelect');
+    const chapterSelect = document.getElementById('chapterSelect');
+    const topicsList = document.getElementById('topicsList');
+    const searchInput = document.getElementById('searchInput');
+
+    fetch('topicIndex.json')
+      .then(res => res.json())
+      .then(json => {
+        topicData = json[Object.keys(json)[0]];
+        loadSubjects();
+        updateRecent();
+        updateGlobalProgress();
+      });
+
+    function loadSubjects() {
+      subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+      Object.entries(topicData).forEach(([subject, chapters]) => {
+        const total = Object.values(chapters).flatMap(obj => Object.values(obj)).reduce((a, b) => a + b, 0);
+        const opt = document.createElement('option');
+        opt.value = subject;
+        opt.textContent = `${subject} (${total})`;
+        subjectSelect.appendChild(opt);
+      });
+    }
+
+    subjectSelect.addEventListener('change', () => {
+      chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+      topicsList.innerHTML = '';
+      const subject = subjectSelect.value;
+      if (!subject) return;
+      Object.entries(topicData[subject]).forEach(([chapter, topics]) => {
+        const count = Object.values(topics).reduce((a, b) => a + b, 0);
+        const opt = document.createElement('option');
+        opt.value = chapter;
+        opt.textContent = `${chapter} (${count})`;
+        chapterSelect.appendChild(opt);
+      });
+    });
+
+    chapterSelect.addEventListener('change', () => {
+      topicsList.innerHTML = '';
+      const subject = subjectSelect.value;
+      const chapter = chapterSelect.value;
+      const topics = topicData[subject][chapter];
+      Object.entries(topics).forEach(([topic, count]) => {
+        const dataKey = `${subject}/${chapter}/${topic}`;
+        const stored = JSON.parse(localStorage.getItem(dataKey) || "[]");
+        const correct = stored.filter(x => x === 9).length;
+        const percent = Math.floor((correct / count) * 100);
+        const div = document.createElement('div');
+        div.className = 'topic-card';
+        div.innerHTML =
+          `<h4>${topic} <span class='badge'>${count}</span></h4><div class='progress'><div class='progress-bar' style='width:${percent}%'></div></div>`;
+        div.onclick = () => {
+          const href = `SmartBook/index.html?sb=${dataKey}`;
+          updateRecentItems(href, topic, subject);
+          window.open(href, '_blank');
+        };
+        topicsList.appendChild(div);
+      });
+    });
+
+    function updateRecentItems(href, text, subject) {
+      const existingIndex = recent.findIndex(r => r.href === href);
+      if (existingIndex !== -1) {
+        const [existing] = recent.splice(existingIndex, 1);
+        recent.unshift(existing);
+      } else {
+        recent.unshift({
+          href,
+          text,
+          subject
+        });
+      }
+
+      // Keep only unique items and limit to 10
+      const uniqueRecent = [];
+      const hrefs = new Set();
+      for (const item of recent) {
+        if (!hrefs.has(item.href)) {
+          hrefs.add(item.href);
+          uniqueRecent.push(item);
+          if (uniqueRecent.length >= 10) break;
+        }
+      }
+      recent = uniqueRecent;
+      localStorage.setItem("recentTopics", JSON.stringify(recent));
+      updateRecent();
+      updateGlobalProgress();
+    }
+
+    function updateRecent() {
+      const container = document.getElementById("recentTopics");
+      container.innerHTML = '';
+      [...recent].slice(0, 10).forEach(item => {
+        const path = new URL(item.href, location.href).searchParams.get("sb");
+        const data = JSON.parse(localStorage.getItem(path) || "[]");
+        const correct = data.filter(e => e === 9).length;
+        const total = topicData ?.[path.split("/")[0]] ?.[path.split("/")[1]] ?.[path.split("/")[2]] || data
+          .length || 1;
+        const percent = Math.floor((correct / total) * 100);
+        const subjectName = path.split("/")[0];
+        const card = document.createElement("div");
+        card.className = "recent-card";
+        card.innerHTML = `
+          <h3>${item.text}</h3>
+          <div class="meta">
+            <span class="badge">${subjectName}</span>
+            <span class="count">${total}</span>
+          </div>
+          <div class='progress'><div class='progress-bar' style='width:${percent}%'></div></div>
+        `;
+        card.onclick = () => {
+          updateRecentItems(item.href, item.text, item.subject);
+          window.open(item.href, "_blank");
+        };
+        container.appendChild(card);
+      });
+    }
+
+    function updateGlobalProgress() {
+      let totalSets = 0;
+      let completedSets = 0;
+      let startedSets = 0;
+
+      Object.entries(topicData).forEach(([subject, chapters]) => {
+        Object.entries(chapters).forEach(([chapter, sets]) => {
+          Object.entries(sets).forEach(([topic, count]) => {
+            totalSets++;
+            const key = `${subject}/${chapter}/${topic}`;
+            const data = JSON.parse(localStorage.getItem(key) || "[]");
+            const correct = data.filter(x => x === 9).length;
+
+            if (data.length === 0) {
+              return; // untouched
+            }
+
+            if (correct === count && count > 0) {
+              completedSets++;
+            } else {
+              startedSets++;
+            }
+          });
+        });
+      });
+
+      const greenPercent = totalSets ? Math.round((completedSets / totalSets) * 100) : 0;
+      const yellowPercent = totalSets ? Math.round((startedSets / totalSets) * 100) : 0;
+      const grayPercent = 100 - greenPercent - yellowPercent;
+
+      const progressBar = document.getElementById("globalProgressBar");
+      progressBar.innerHTML = `
+        <div style="width: ${greenPercent}%; background: var(--green0); height: 100%;"></div>
+        <div style="width: ${yellowPercent}%; background: var(--yellowBG); height: 100%;"></div>
+        <div style="width: ${grayPercent}%; background: var(--border); height: 100%;"></div>
+      `;
+    }
+
+    searchInput.addEventListener("input", () => {
+      const term = searchInput.value.toLowerCase().trim();
+      const resultsDiv = document.getElementById("searchResults");
+      const resultsTitle = document.getElementById("searchResultsTitle");
+
+      resultsDiv.innerHTML = "";
+      resultsTitle.style.display = "none";
+
+      if (!term) {
+        subjectSelect.selectedIndex = 0;
+        chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+        topicsList.innerHTML = '';
+        return;
+      }
+
+      const matches = [];
+
+      for (const [subject, chapters] of Object.entries(topicData)) {
+        for (const [chapter, topics] of Object.entries(chapters)) {
+          for (const [topic, count] of Object.entries(topics)) {
+            if (topic.toLowerCase().includes(term)) {
+              matches.push({
+                subject,
+                chapter,
+                topic,
+                count
+              });
+            }
+          }
+        }
+      }
+
+      if (matches.length === 0) {
+        resultsDiv.innerHTML = "<p>No matching topic found.</p>";
+        return;
+      }
+
+      // Set dropdowns based on first match
+      const first = matches[0];
+      subjectSelect.value = first.subject;
+
+      // Load chapter dropdown
+      chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+      Object.entries(topicData[first.subject]).forEach(([ch, topics]) => {
+        const total = Object.values(topics).reduce((a, b) => a + b, 0);
+        const opt = document.createElement("option");
+        opt.value = ch;
+        opt.textContent = `${ch} (${total})`;
+        chapterSelect.appendChild(opt);
+      });
+
+      chapterSelect.value = first.chapter;
+
+      // Load topic list
+      topicsList.innerHTML = "";
+      Object.entries(topicData[first.subject][first.chapter]).forEach(([t, c]) => {
+        const dataKey = `${first.subject}/${first.chapter}/${t}`;
+        const stored = JSON.parse(localStorage.getItem(dataKey) || "[]");
+        const correct = stored.filter(x => x === 9).length;
+        const percent = Math.floor((correct / c) * 100);
+        const div = document.createElement("div");
+        div.className = "topic-card";
+        div.innerHTML =
+          `<h4>${t} <span class='badge'>${c}</span></h4><div class='progress'><div class='progress-bar' style='width:${percent}%'></div></div>`;
+        div.onclick = () => {
+          const href = `SmartBook/index.html?sb=${dataKey}`;
+          updateRecentItems(href, t, first.subject);
+          window.open(href, "_blank");
+        };
+        topicsList.appendChild(div);
+      });
+
+      // Show all matched topics in the bottom section
+      resultsTitle.style.display = "block";
+      resultsDiv.innerHTML = "";
+      matches.forEach(({
+        subject,
+        chapter,
+        topic,
+        count
+      }) => {
+        const dataKey = `${subject}/${chapter}/${topic}`;
+        const stored = JSON.parse(localStorage.getItem(dataKey) || "[]");
+        const correct = stored.filter(x => x === 9).length;
+        const percent = Math.floor((correct / count) * 100);
+        const div = document.createElement("div");
+        div.className = "topic-card";
+        div.innerHTML = `<h4>${topic} <span class='badge'>${count}</span> <small>(${subject} / ${chapter})</small></h4>
+          <div class='progress'><div class='progress-bar' style='width:${percent}%'></div></div>`;
+        div.onclick = () => {
+          const href = `SmartBook/index.html?sb=${dataKey}`;
+          updateRecentItems(href, topic, subject);
+          window.open(href, "_blank");
+        };
+        resultsDiv.appendChild(div);
+      });
+    });
+
+    // Dark mode functions
+    function dark() {
+      x = localStorage.getItem("qno-darkflag");
+      if (x == null) {
+        localStorage.setItem("qno-darkflag", 1);
+        console.log("INIT Dark Mode", x);
+        dark();
+      } else {
+        var r = document.querySelector(':root');
+        if (x == 1) {
+          r.style.setProperty('--darkflag', '0');
+          r.style.setProperty('--bg', '#fff');
+          r.style.setProperty('--bg0', '#fefefe');
+          r.style.setProperty('--border', '#ccc');
+          r.style.setProperty('--font', '#343a40');
+          r.style.setProperty('--opCol', '#f0f8ff');
+          r.style.setProperty('--red0', '#a42834');
+          r.style.setProperty('--redG', '#ff7e89');
+          r.style.setProperty('--green0', '#23903c');
+          r.style.setProperty('--greenG', '#76d04d');
+          r.style.setProperty('--greenBG', '#bdff9f');
+          r.style.setProperty('--yellowBG', '#ffdc17');
+          r.style.setProperty('--redBG', '#ff9f9f');
+          r.style.setProperty('--accCol2', '#0263ca');
+          r.style.setProperty('--nbCol', '#007bff');
+
+          try {
+            document.getElementById("dmb1").innerHTML = 'Lights Off';
+          } catch (e) {
+            console.log("dmb1 in not found")
+          }
+        } else if (x == 0) {
+          r.style.setProperty('--darkflag', '1');
+          r.style.setProperty('--bg', '#000');
+          r.style.setProperty('--bg0', '#111');
+          r.style.setProperty('--font', '#d3d3d3');
+          r.style.setProperty('--border', '#343a40');
+          r.style.setProperty('--opCol', '#222');
+          r.style.setProperty('--red0', '#ffbac0');
+          r.style.setProperty('--redG', '#fe2436');
+          r.style.setProperty('--green0', '#96ff9d');
+          r.style.setProperty('--greenG', '#76d04d');
+          r.style.setProperty('--greenBG', '#226d00');
+          r.style.setProperty('--yellowBG', '#ffdc17');
+          r.style.setProperty('--redBG', '#6d2222');
+          r.style.setProperty('--accCol2', '#84c5fe');
+          r.style.setProperty('--nbCol', '#0263ca');
+
+          try {
+            document.getElementById("dmb1").innerHTML = 'Lights On';
+          } catch (e) {
+            console.log("dmb1 in not found")
+          }
+        }
+      }
+    }
+
+    function cdm() {
+      x = localStorage.getItem("qno-darkflag");
+      if (x == null) {
+        localStorage.setItem("qno-darkflag", 1);
+        console.log("INIT Dark Mode", x);
+        dark();
+      } else if (x == 1) {
+        localStorage.setItem("qno-darkflag", 0);
+        document.getElementById("dmb1").innerHTML = 'Lights Off';
+        dark();
+      } else if (x == 0) {
+        localStorage.setItem("qno-darkflag", 1);
+        document.getElementById("dmb1").innerHTML = 'Lights On';
+        dark();
+      }
+    }
+
+    // Initialize dark mode
+    dark();
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const mode = localStorage.getItem("qno-darkflag");
+      document.getElementById("dmb1").name = mode === "0" ? "sunny-outline" : "moon-outline";
+    });
+
+    function updateGlobalProgress() {
+      let totalSets = 0;
+      let completedSets = 0;
+      let startedSets = 0;
+
+      Object.entries(topicData).forEach(([subject, chapters]) => {
+        Object.entries(chapters).forEach(([chapter, sets]) => {
+          Object.entries(sets).forEach(([topic, count]) => {
+            totalSets++;
+            const key = `${subject}/${chapter}/${topic}`;
+            const data = JSON.parse(localStorage.getItem(key) || "[]");
+            const correct = data.filter(x => x === 9).length;
+
+            /*console.log(`📚 Set: ${key}`);
+            console.log(`   ➤ Stored Answers: ${data}`);
+            console.log(`   ➤ Correct: ${correct}/${count}`);*/
+
+            if (data.length === 0) {
+              return; // untouched
+            }
+
+            if (correct === count && count > 0) {
+              completedSets++;
+            } else {
+              startedSets++;
+            }
+          });
+        });
+      });
+
+      const greenPercent = totalSets ? Math.round((completedSets / totalSets) * 100) : 0;
+      const yellowPercent = totalSets ? Math.round((startedSets / totalSets) * 100) : 0;
+      const grayPercent = 100 - greenPercent - yellowPercent;
+
+      console.log("📊 Final Calculation:");
+      console.log(`   ✅ Completed Sets: ${completedSets}`);
+      console.log(`   🟡 Started Sets:   ${startedSets}`);
+      console.log(`   ⚪ Untouched Sets: ${totalSets - completedSets - startedSets}`);
+      console.log(`   % Green: ${greenPercent} | % Yellow: ${yellowPercent} | % Gray: ${grayPercent}`);
+
+      const progressBar = document.getElementById("globalProgressBar");
+      progressBar.innerHTML = `
+    <div style="width: ${greenPercent}%; background: var(--green0); height: 100%;"></div>
+    <div style="width: ${yellowPercent}%; background: var(--yellowBG); height: 100%;"></div>
+    <div style="width: ${grayPercent}%; background: var(--border); height: 100%;"></div>
+  `;
+    }
+  </script>
+</body>
+
+</html>
